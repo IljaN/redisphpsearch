@@ -41,7 +41,7 @@ class Indexer
      * @param $id
      * @param $prefix
      */
-    public function index($text, $id, $prefix = null)
+    public function index($text, $id, $prefix = 'keywords::')
     {
         $tokens = $this->tokenizer->tokenize($text);
 
@@ -50,7 +50,7 @@ class Indexer
         }
 
         foreach ($tokens as $token) {
-            $this->client->sAdd($token, $prefix . $id);
+            $this->client->sAdd($prefix . $token, $id);
         }
     }
 
