@@ -10,15 +10,15 @@
 namespace IljaN\RedisPhpSearch;
 
 /**
- * Interface FilterInterface
+ * Interface TransformerInterface
  * @package IljaN\RedisPhpSearch
  */
-interface FilterInterface
+interface TransformerInterface
 {
     /**
      * @param $input
      * @return array
      */
-    public function filter(array $input);
+    public function transform($input);
 
 }

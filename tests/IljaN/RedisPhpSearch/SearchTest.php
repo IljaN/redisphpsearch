@@ -24,7 +24,12 @@ class SearchTest extends PHPUnit_Framework_TestCase
     /**
      * @var PHPUnit_Framework_MockObject_MockObject
      */
-    private $filterMock;
+    private $termTransformerMock;
+
+    /**
+     * @var PHPUnit_Framework_MockObject_MockObject
+     */
+    private $resultTransformerMock;
 
     public function setUp()
     {
@@ -32,47 +37,49 @@ class SearchTest extends PHPUnit_Framework_TestCase
             ->setMethods(array('sInter', 'sAdd', 'close', 'getClient'))
             ->getMock();
 
-        $this->filterMock = $this->getMockBuilder('IljaN\RedisPhpSearch\FilterInterface')
-            ->setMethods(array('filter'))
+        $this->termTransformerMock = $this->getMockBuilder('IljaN\RedisPhpSearch\TransformerInterface')
+            ->setMethods(array('transform'))
             ->getMock();
 
-        $this->sut = new \IljaN\RedisPhpSearch\Search($this->clientMock);
-    }
+        $this->resultTransformerMock = $this->getMockBuilder('IljaN\RedisPhpSearch\TransformerInterface')
+            ->setMethods(array('transform'))
+            ->getMock();
 
-    public function testSearchWithoutFilters()
-    {
-        $this->clientMock->expects($this->once())
-            ->method('sInter')
-            ->with($this->equalTo(array('foo', 'bar', 'baz')))
-            ->will($this->returnValue(self::TEST_SEARCH_EXPECTED_RESULT));
-
-        $result = $this->sut->search(self::TEST_SEARCH_TERM);
-
-        $this->assertEquals(self::TEST_SEARCH_EXPECTED_RESULT, $result);
+        $this->sut = new \IljaN\RedisPhpSearch\Search($this->clientMock, $this->termTransformerMock);
     }
 
 
     public function testSearchCallsSearchTermFilter()
     {
-        $this->filterMock->expects($this->once())
-            ->method('filter')
+        $this->termTransformerMock->expects($this->once())
+            ->method('transform')
+            ->will($this->returnValue(array('foo', 'bar', 'baz')));
+
+        $this->clientMock->expects($this->any())
+            ->method('sInter')
             ->will($this->returnValue(array()));
 
-        $this->sut->setSearchTermFilter($this->filterMock);
-        $this->sut->search('');
+
+        $this->sut->search(self::TEST_SEARCH_TERM);
     }
 
     public function testSearchCallsResultFilter()
     {
-        $this->filterMock->expects($this->once())
-            ->method('filter')
+        $this->termTransformerMock->expects($this->once())
+            ->method('transform')
+            ->will($this->returnValue(array()));
+
+        $this->resultTransformerMock->expects($this->once())
+            ->method('transform')
             ->will($this->returnValue(array()));
 
         $this->clientMock->expects($this->any())
             ->method('sInter')
             ->will($this->returnValue(array()));
 
-        $this->sut->setResultFilter($this->filterMock);
+        $this->sut->setResultTransformer($this->resultTransformerMock);
+
+
         $this->sut->search('');
     }
 
@@ -82,12 +89,12 @@ class SearchTest extends PHPUnit_Framework_TestCase
      */
     public function testSearchTermFilterReceivesSearchTerm()
     {
-        $this->filterMock->expects($this->any())
-            ->method('filter')
-            ->with(array(self::TEST_SEARCH_TERM))
+        $this->termTransformerMock->expects($this->any())
+            ->method('transform')
+            ->with(self::TEST_SEARCH_TERM)
             ->will($this->returnValue(array()));
 
-        $this->sut->setSearchTermFilter($this->filterMock);
+        $this->sut->setSearchTermTransformer($this->termTransformerMock);
         $this->sut->search(self::TEST_SEARCH_TERM);
     }
 
@@ -104,11 +111,11 @@ class SearchTest extends PHPUnit_Framework_TestCase
             ->with($this->anything())
             ->will($this->returnValue(array('foo')));
 
-        $this->filterMock->expects($this->any())
-            ->method('filter')
+        $this->termTransformerMock->expects($this->any())
+            ->method('transform')
             ->will($this->returnValue($redisResult));
 
-        $this->sut->setResultFilter($this->filterMock);
+        $this->sut->setResultTransformer($this->termTransformerMock);
 
         $this->sut->search('');
     }
@@ -125,16 +132,16 @@ class SearchTest extends PHPUnit_Framework_TestCase
             ->with($this->anything())
             ->will($this->returnValue($redisResult));
 
-        $this->filterMock->expects($this->any())
-            ->method('filter')
+        $this->termTransformerMock->expects($this->any())
+            ->method('transform')
             ->will($this->returnValue($redisResult));
 
-        $this->sut->setResultFilter($this->filterMock);
+        $this->sut->setResultTransformer($this->termTransformerMock);
         $this->sut->search('');
 
         $searchResult = $this->sut->search('');
 
-        $this->assertEquals($redisResult, $searchResult, 'Did not return output filter result');
+        $this->assertEquals($redisResult, $searchResult, 'Did not return output transform result');
     }
 
 
@@ -150,38 +157,25 @@ class SearchTest extends PHPUnit_Framework_TestCase
             ->method('sInter')
             ->with(array($inputFilterResult));
 
-        $this->filterMock->expects($this->any())
-            ->method('filter')
+        $this->termTransformerMock->expects($this->any())
+            ->method('transform')
             ->will($this->returnValue(array($inputFilterResult)));
 
-        $this->sut->setSearchTermFilter($this->filterMock);
+        $this->sut->setSearchTermTransformer($this->termTransformerMock);
         $this->sut->search('');
 
     }
-
-    public function testSearchRedisReceivesExplodedTermWithoutSearchTermFilter()
-    {
-        $searchTerm = "hello world foo bar";
-        $expectedRedisInput = array('hello', 'world', 'foo', 'bar');
-
-        $this->clientMock->expects($this->once())
-            ->method('sInter')
-            ->with($expectedRedisInput);
-
-        $this->sut->search($searchTerm);
-    }
-
 
     /**
      * @expectedException RuntimeException
      */
     public function testExceptionIfSearchTermFilterDoesNotReturnArray()
     {
-        $this->filterMock->expects($this->any())
-            ->method('filter')
+        $this->termTransformerMock->expects($this->any())
+            ->method('transform')
             ->will($this->returnValue('string'));
 
-        $this->sut->setSearchTermFilter($this->filterMock);
+        $this->sut->setSearchTermTransformer($this->termTransformerMock);
         $this->sut->search('');
     }
 
@@ -190,15 +184,15 @@ class SearchTest extends PHPUnit_Framework_TestCase
      */
     public function testExceptionIfResultFilterDoesNotReturnArray()
     {
-        $this->filterMock->expects($this->any())
-            ->method('filter')
+        $this->termTransformerMock->expects($this->any())
+            ->method('transform')
             ->will($this->returnValue('string'));
 
         $this->clientMock->expects($this->any())
             ->method('sInter')
             ->will($this->returnValue(array()));
 
-        $this->sut->setResultFilter($this->filterMock);
+        $this->sut->setResultTransformer($this->termTransformerMock);
         $this->sut->search('');
     }
 
@@ -212,17 +206,17 @@ class SearchTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($mock, $result);
 
-        $mock = $this->getMockBuilder('IljaN\RedisPhpSearch\FilterInterface')
+        $mock = $this->getMockBuilder('IljaN\RedisPhpSearch\TransformerInterface')
             ->getMock();
 
-        $this->sut->setSearchTermFilter($mock);
-        $result = $this->sut->getSearchTermFilter();
+        $this->sut->setSearchTermTransformer($mock);
+        $result = $this->sut->getSearchTermTransformer();
 
         $this->assertEquals($mock, $result);
 
 
-        $this->sut->setResultFilter($mock);
-        $result = $this->sut->getResultFilter();
+        $this->sut->setResultTransformer($mock);
+        $result = $this->sut->getResultTransformer();
 
         $this->assertEquals($mock, $result);
     }

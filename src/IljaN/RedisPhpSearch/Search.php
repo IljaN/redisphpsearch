@@ -23,28 +23,28 @@ class Search
     private $client;
 
     /**
-     * @var FilterInterface
+     * @var TransformerInterface
      */
-    private $searchTermFilter;
+    private $searchTermTransformer;
 
     /**
-     * @var FilterInterface
+     * @var TransformerInterface
      */
-    private $resultFilter;
+    private $resultTransformer;
 
     /**
      * @param \IljaN\RedisPhpSearch\ClientInterface $clientWrapper
-     * @param FilterInterface $searchTermFilter
-     * @param FilterInterface $resultFilter
+     * @param TransformerInterface $searchTermTransformer
+     * @param TransformerInterface $resultTransformer
      */
     public function __construct(
         ClientInterface $clientWrapper,
-        FilterInterface $searchTermFilter = null,
-        FilterInterface $resultFilter = null
+        TransformerInterface $searchTermTransformer,
+        TransformerInterface $resultTransformer = null
     ) {
         $this->client = $clientWrapper;
-        $this->searchTermFilter = $searchTermFilter;
-        $this->resultFilter = $resultFilter;
+        $this->searchTermTransformer = $searchTermTransformer;
+        $this->resultTransformer = $resultTransformer;
     }
 
 
@@ -54,24 +54,20 @@ class Search
      */
     public function search($term)
     {
-        if ($this->searchTermFilter) {
-            $term = $this->searchTermFilter->filter(array($term));
 
-            if (!is_array($term)) {
-                throw new \RuntimeException(sprintf('Search term filter must return array, %s given.', gettype($term)));
-            }
+        $term = $this->searchTermTransformer->transform($term);
 
-        } else {
-            $term = explode(' ', $term);
+        if (!is_array($term)) {
+            throw new \RuntimeException(sprintf('Search term transform must return array, %s given.', gettype($term)));
         }
 
         $result = $this->client->sInter($term);
 
-        if ($this->resultFilter) {
-            $result = $this->resultFilter->filter($result);
+        if ($this->resultTransformer) {
+            $result = $this->resultTransformer->transform($result);
 
             if (!is_array($result)) {
-                throw new \RuntimeException(sprintf('Result filter must return array, %s given.', gettype($result)));
+                throw new \RuntimeException(sprintf('Result transform must return array, %s given.', gettype($result)));
             }
         }
 
@@ -81,33 +77,33 @@ class Search
     /**
      * @return mixed
      */
-    public function getSearchTermFilter()
+    public function getSearchTermTransformer()
     {
-        return $this->searchTermFilter;
+        return $this->searchTermTransformer;
     }
 
     /**
-     * @param mixed $searchTermFilter
+     * @param mixed $searchTermTransformer
      */
-    public function setSearchTermFilter(FilterInterface $searchTermFilter)
+    public function setSearchTermTransformer(TransformerInterface $searchTermTransformer)
     {
-        $this->searchTermFilter = $searchTermFilter;
+        $this->searchTermTransformer = $searchTermTransformer;
     }
 
     /**
      * @return mixed
      */
-    public function getResultFilter()
+    public function getResultTransformer()
     {
-        return $this->resultFilter;
+        return $this->resultTransformer;
     }
 
     /**
-     * @param mixed $resultFilter
+     * @param mixed $resultTransformer
      */
-    public function setResultFilter(FilterInterface $resultFilter)
+    public function setResultTransformer(TransformerInterface $resultTransformer)
     {
-        $this->resultFilter = $resultFilter;
+        $this->resultTransformer = $resultTransformer;
     }
 
     /**
