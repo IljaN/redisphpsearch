@@ -10,7 +10,6 @@
 class SearchTest extends PHPUnit_Framework_TestCase
 {
     const TEST_SEARCH_TERM = 'foo bar baz';
-    const TEST_SEARCH_EXPECTED_RESULT = array('result1', 'result2');
 
     /**
      * @var \IljaN\RedisPhpSearch\Search
