@@ -21,13 +21,16 @@ use IljaN\RedisPhpSearch\TransformerInterface;
  */
 class BasicTermTransformer implements TransformerInterface
 {
-
     /**
-     * @param $input
+     * @param string $input
      * @return array
      */
     public function transform($input)
     {
+        if (!is_string($input)) {
+            throw new \InvalidArgumentException(sprintf('Input must be a string, %s given.', gettype($input)));
+        }
+
         $termPieces = explode(' ', $input);
         return array_map('strtolower', $termPieces);
     }
