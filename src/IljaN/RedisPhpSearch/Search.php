@@ -50,9 +50,10 @@ class Search
 
     /**
      * @param string $term
+     * @param string $prefix
      * @return array
      */
-    public function search($term)
+    public function search($term, $prefix = 'keywords::')
     {
 
         $term = $this->searchTermTransformer->transform($term);
@@ -61,7 +62,7 @@ class Search
             throw new \RuntimeException(sprintf('Search term transform must return array, %s given.', gettype($term)));
         }
 
-        $result = $this->client->sInter($term);
+        $result = $this->client->sInter($prefix . $term);
 
         if ($this->resultTransformer) {
             $result = $this->resultTransformer->transform($result);
