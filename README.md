@@ -6,13 +6,13 @@
 **IMPORTANT: This project is under heavy development, everything is subject to change!**
 
 ##About
-A light weight php library which provides fulltext search capability
-by using [redis](http://redis.io) as index server.
+A lightweight PHP library which provides fulltext search capability
+using [redis](http://redis.io) as index server.
 
 ##Overview
 
 ###Indexing
-A index is created by taking a text to index and an id. First the text is processed by a tokenizer function which
+A index is created by taking a text and an id. First the text is processed by a tokenizer function which
 splits the text in to multiple tokens (words).
 
 ```php
@@ -21,7 +21,7 @@ array('Hello','World');
 // For string "Goodbye World!"
 array('Goodbye','World'); 
 ```
-After tokenizing a redis set is created out of each token ([sAdd](http://redis.io/commands/sadd)) whereby the token is the redis key and the set members are the ids. 
+After tokenizing a redis set is created out of each token ([SADD](http://redis.io/commands/sadd)) whereby the token is the redis key and the set members are the ids. 
 
 An id can be anything, for example a database primary key in a relational database or some other entity id
 which identifies the full text containing the token.
@@ -49,7 +49,7 @@ Translates to following redis commands:
 
 ###Searching
 
-Searching is done by intersecting multiple sets ([sInter](http://redis.io/commands/sinter)) thus only getting the id`s which contain every token (word).
+Searching is done by intersecting multiple sets ([SINTER](http://redis.io/commands/sinter)) thus only getting the id`s which contain every token (word).
 ```php
 use IljaN\RedisPhpSearch\ClientWrapper\PhpRedis;
 use IljaN\RedisPhpSearch\Tokenizer\BasicTokenizer;
@@ -89,6 +89,12 @@ wip
 ###Transformers
 
 wip
+
+###Tests
+```bash
+$cd redisphpsearch
+$phpunit
+```
 
 ###Todo
 
