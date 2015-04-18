@@ -22,9 +22,10 @@ class BasicTokenizer implements TokenizerInterface
      */
     public function tokenize($input)
     {
-        return array_unique(
+        $result = array_unique(
             preg_split(BasicTokenizer::REGEX_WHITESPACE_AND_PUNCTUATION, $input, 0, PREG_SPLIT_NO_EMPTY)
         );
-    }
 
+       return array_map('strtolower', $result);
+    }
 }
