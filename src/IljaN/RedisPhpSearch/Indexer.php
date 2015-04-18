@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the PhpRedisSearch Library
+ * This file is part of the RedisPhpSearch Library
  *
  * (c) Ilja Neumann <https://github.com/IljaN>
  *
