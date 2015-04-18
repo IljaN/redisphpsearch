@@ -63,10 +63,10 @@ class IndexerTest extends PHPUnit_Framework_TestCase {
         $this->clientMock->expects($this->exactly($tokenCount))
             ->method('sAdd')
             ->withConsecutive(
-                array($this->equalTo('foo'), $this->equalTo(self::TEST_PREFIX . self::TEST_KEY)),
-                array($this->equalTo('bar'), $this->equalTo(self::TEST_PREFIX . self::TEST_KEY)),
-                array($this->equalTo('baz'), $this->equalTo(self::TEST_PREFIX . self::TEST_KEY)),
-                array($this->equalTo('qux'), $this->equalTo(self::TEST_PREFIX . self::TEST_KEY))
+                array($this->equalTo(self::TEST_PREFIX . 'foo'), $this->equalTo(self::TEST_KEY)),
+                array($this->equalTo(self::TEST_PREFIX . 'bar'), $this->equalTo(self::TEST_PREFIX . self::TEST_KEY)),
+                array($this->equalTo(self::TEST_PREFIX . 'baz'), $this->equalTo(self::TEST_PREFIX . self::TEST_KEY)),
+                array($this->equalTo(self::TEST_PREFIX . 'qux'), $this->equalTo(self::TEST_PREFIX . self::TEST_KEY))
             );
 
         $this->sut->index(self::TEST_TEXT, self::TEST_KEY, self::TEST_PREFIX);
