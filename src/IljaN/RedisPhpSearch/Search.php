@@ -49,20 +49,31 @@ class Search
 
 
     /**
-     * @param string $term
+     * @param $term
      * @param string $prefix
      * @return array
+     * @internal param string $termParts
      */
     public function search($term, $prefix = 'keywords::')
     {
 
-        $term = $this->searchTermTransformer->transform($term);
+        $termParts = $this->searchTermTransformer->transform($term);
 
-        if (!is_array($term)) {
-            throw new \RuntimeException(sprintf('Search term transform must return array, %s given.', gettype($term)));
+        if (!is_array($termParts)) {
+            throw new \RuntimeException(sprintf('Search termParts transform must return array, %s given.',
+                gettype($termParts)));
         }
 
-        $result = $this->client->sInter($prefix . $term);
+        $prefixedTermParts = array();
+        if ($prefix) {
+            foreach ($termParts as $termPart) {
+                $prefixedTermParts[] = $termPart();
+            }
+            $termParts = $prefixedTermParts;
+        }
+
+
+        $result = $this->client->sInter($termParts);
 
         if ($this->resultTransformer) {
             $result = $this->resultTransformer->transform($result);
