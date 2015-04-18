@@ -1,5 +1,8 @@
 #RedisPhpSearch Library
 
+[![Build Status](https://travis-ci.org/IljaN/redisphpsearch.svg?branch=master)](https://travis-ci.org/IljaN/redisphpsearch)
+[![Coverage Status](https://coveralls.io/repos/IljaN/redisphpsearch/badge.svg?branch=master)](https://coveralls.io/r/IljaN/redisphpsearch?branch=master)
+
 **IMPORTANT: This project is under heavy development, everything is subject to change!**
 
 ##About
