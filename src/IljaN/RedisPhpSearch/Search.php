@@ -67,11 +67,10 @@ class Search
         $prefixedTermParts = array();
         if ($prefix) {
             foreach ($termParts as $termPart) {
-                $prefixedTermParts[] = $termPart();
+                $prefixedTermParts[] = $termPart;
             }
             $termParts = $prefixedTermParts;
         }
-
 
         $result = $this->client->sInter($termParts);
 
@@ -133,6 +132,4 @@ class Search
     {
         $this->client = $client;
     }
-
-
 }
