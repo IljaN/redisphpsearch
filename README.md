@@ -28,14 +28,14 @@ which identifies the full text containing the token.
 
 ```php
 use IljaN\RedisPhpSearch\ClientWrapper\PhpRedis;
-use IljaN\RedisPhpSearch\Tokenizer\BasicTokenizer;
+use IljaN\RedisPhpSearch\Tokenizer\SimpleTokenizer;
 use IljaN\RedisPhpSearch\Indexer;
 
 $redis = new \Redis();
 $redis->connect('127.0.0.1');
 $redisClientWrapper = new PhpRedis($redis); // Wraps original client for portability
 
-$indexer = new Indexer($redisClientWrapper, new BasicTokenizer());
+$indexer = new Indexer($redisClientWrapper, new SimpleTokenizer());
 $indexer->index('Hello World!', 1);
 $indexer->index('Goodbye World!', 2);
 ```
@@ -52,7 +52,7 @@ Translates to following redis commands:
 Searching is done by intersecting multiple sets ([SINTER](http://redis.io/commands/sinter)) thus only getting the id`s which contain every token (word).
 ```php
 use IljaN\RedisPhpSearch\ClientWrapper\PhpRedis;
-use IljaN\RedisPhpSearch\Tokenizer\BasicTokenizer;
+use IljaN\RedisPhpSearch\Tokenizer\SimpleTokenizer;
 use IljaN\RedisPhpSearch\Search;
 
 // Setup ommited... (see above)

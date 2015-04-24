@@ -12,7 +12,7 @@ namespace IljaN\RedisPhpSearch\Tokenizer;
 
 use IljaN\RedisPhpSearch\TokenizerInterface;
 
-class BasicTokenizer implements TokenizerInterface
+class SimpleTokenizer implements TokenizerInterface
 {
     const REGEX_WHITESPACE_AND_PUNCTUATION = '/[^a-zA-Z0-9]/';
 
@@ -23,7 +23,7 @@ class BasicTokenizer implements TokenizerInterface
     public function tokenize($input)
     {
         $result = array_unique(
-            preg_split(BasicTokenizer::REGEX_WHITESPACE_AND_PUNCTUATION, $input, 0, PREG_SPLIT_NO_EMPTY)
+            preg_split(SimpleTokenizer::REGEX_WHITESPACE_AND_PUNCTUATION, $input, 0, PREG_SPLIT_NO_EMPTY)
         );
 
        return array_map('strtolower', $result);

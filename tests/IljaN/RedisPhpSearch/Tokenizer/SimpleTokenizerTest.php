@@ -7,15 +7,17 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-class BasicTokenizerTest extends PHPUnit_Framework_TestCase {
+
+class SimpleTokenizerTest extends PHPUnit_Framework_TestCase
+{
     /**
-     * @var \IljaN\RedisPhpSearch\Tokenizer\BasicTokenizer
+     * @var \IljaN\RedisPhpSearch\Tokenizer\SimpleTokenizer
      */
     private $sut;
 
     public function setUp()
     {
-        $this->sut = new IljaN\RedisPhpSearch\Tokenizer\BasicTokenizer();
+        $this->sut = new IljaN\RedisPhpSearch\Tokenizer\SimpleTokenizer();
     }
 
     public function testTokenizeReturnsUniqueValuesAndSplitsOnSpace()

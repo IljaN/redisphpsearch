@@ -13,13 +13,13 @@ namespace IljaN\RedisPhpSearch\Transformer\Term;
 use IljaN\RedisPhpSearch\TransformerInterface;
 
 /**
- * Class BasicTermTransformer
+ * Class SimpleTermTransformer
  * @package IljaN\RedisPhpSearch\Transformer\Term
  *
  * Explodes search string by space and lowercases everything
- * thus making search case insensitive (use in conjunction with BasicTokenizer)
+ * thus making search case insensitive (use in conjunction with SimpleTokenizer)
  */
-class BasicTermTransformer implements TransformerInterface
+class SimpleTermTransformer implements TransformerInterface
 {
     /**
      * @param string $input
