@@ -161,7 +161,7 @@ class SearchTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue(array($inputFilterResult)));
 
         $this->sut->setSearchTermTransformer($this->termTransformerMock);
-        $this->sut->search('');
+        $this->sut->search('', null);
 
     }
 

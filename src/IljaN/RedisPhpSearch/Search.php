@@ -63,12 +63,8 @@ class Search
                 gettype($termParts)));
         }
 
-        $prefixedTermParts = array();
         if ($prefix) {
-            foreach ($termParts as $termPart) {
-                $prefixedTermParts[] = $termPart;
-            }
-            $termParts = $prefixedTermParts;
+            $termParts = $this->prefixSearchTermParts($termParts, $prefix);
         }
 
         $result = $this->client->sInter($termParts);
@@ -82,6 +78,16 @@ class Search
         }
 
         return $result;
+    }
+
+    private function prefixSearchTermParts($termParts, $prefix)
+    {
+        $prefixed = array();
+        foreach ($termParts as $termPart) {
+            $prefixed[] = $prefix . $termPart;
+        }
+
+        return $prefixed;
     }
 
     /**
