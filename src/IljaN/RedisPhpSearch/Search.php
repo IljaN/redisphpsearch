@@ -55,12 +55,12 @@ class Search
      */
     public function search($term, $prefix = 'keywords::')
     {
-
         $termParts = $this->searchTermTransformer->transform($term);
 
         if (!is_array($termParts)) {
-            throw new \RuntimeException(sprintf('Search termParts transform must return array, %s given.',
-                gettype($termParts)));
+            throw new \RuntimeException(
+                sprintf('Search termParts transform must return array, %s given.', gettype($termParts))
+            );
         }
 
         if ($prefix) {
@@ -73,13 +73,20 @@ class Search
             $result = $this->resultTransformer->transform($result);
 
             if (!is_array($result)) {
-                throw new \RuntimeException(sprintf('Result transform must return array, %s given.', gettype($result)));
+                throw new \RuntimeException(
+                    sprintf('Result transform must return array, %s given.', gettype($result))
+                );
             }
         }
 
         return $result;
     }
 
+    /**
+     * @param $termParts
+     * @param $prefix
+     * @return array
+     */
     private function prefixSearchTermParts($termParts, $prefix)
     {
         $prefixed = array();
@@ -138,3 +145,4 @@ class Search
         $this->client = $client;
     }
 }
+
