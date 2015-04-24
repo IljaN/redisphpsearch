@@ -52,7 +52,6 @@ class Search
      * @param $term
      * @param string $prefix
      * @return array
-     * @internal param string $termParts
      */
     public function search($term, $prefix = 'keywords::')
     {
