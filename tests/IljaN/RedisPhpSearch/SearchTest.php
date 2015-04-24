@@ -167,6 +167,7 @@ class SearchTest extends PHPUnit_Framework_TestCase
 
     /**
      * @expectedException RuntimeException
+     * @expectedExceptionMessage Search termParts transform must return array, string given.
      */
     public function testExceptionIfSearchTermFilterDoesNotReturnArray()
     {
@@ -180,18 +181,23 @@ class SearchTest extends PHPUnit_Framework_TestCase
 
     /**
      * @expectedException RuntimeException
+     * @expectedExceptionMessage Result transform must return array, string given.
      */
     public function testExceptionIfResultFilterDoesNotReturnArray()
     {
         $this->termTransformerMock->expects($this->any())
             ->method('transform')
-            ->will($this->returnValue('string'));
+            ->will($this->returnValue(array('blafuzzle')));
 
         $this->clientMock->expects($this->any())
             ->method('sInter')
             ->will($this->returnValue(array()));
 
-        $this->sut->setResultTransformer($this->termTransformerMock);
+        $this->resultTransformerMock->expects($this->any())
+            ->method('transform')
+            ->will($this->returnValue('string'));
+
+        $this->sut->setResultTransformer($this->resultTransformerMock);
         $this->sut->search('');
     }
 
