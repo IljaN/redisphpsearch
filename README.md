@@ -1,17 +1,17 @@
-#RedisPhpSearch Library
+# RedisPhpSearch Library
 
 [![Build Status](https://travis-ci.org/IljaN/redisphpsearch.svg?branch=master)](https://travis-ci.org/IljaN/redisphpsearch)
 [![Coverage Status](https://coveralls.io/repos/IljaN/redisphpsearch/badge.svg?branch=master)](https://coveralls.io/r/IljaN/redisphpsearch?branch=master)
 
 **IMPORTANT: This project is under heavy development, everything is subject to change!**
 
-##About
+## About
 A lightweight PHP library which provides fulltext search capability
 using [redis](http://redis.io) as index server.
 
-##Overview
+## Overview
 
-###Indexing
+### Indexing
 A index is created by taking a text and an id. First the text is processed by a tokenizer function which
 splits the text in to multiple tokens (words).
 
@@ -47,7 +47,7 @@ Translates to following redis commands:
 127.0.0.1:6379> SADD World! 2
 ```
 
-###Searching
+### Searching
 
 Searching is done by intersecting multiple sets ([SINTER](http://redis.io/commands/sinter)) thus only getting the id`s which contain every token (word).
 ```php
@@ -74,29 +74,29 @@ Translates to following redis commands:
 1) "2"
 127.0.0.1:6379> 
 ```
-##Usage
+## Usage
 
 wip
 
-###Setup
+### Setup
 
 wip
 
-###Tokenizers
+### Tokenizers
 
 wip
 
-###Transformers
+### Transformers
 
 wip
 
-###Tests
+### Tests
 ```bash
 $cd redisphpsearch
 $phpunit
 ```
 
-###Todo
+### Todo
 
 wip
 
